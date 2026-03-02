@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>大运重卡 · 蒋师傅的个人空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        /* 弹窗遮罩层 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 28px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: modal-appear 0.3s ease;
+        }
+
+        @keyframes modal-appear {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 22px 24px 8px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .modal-header h2 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        .modal-counter {
+            font-size: 0.9rem;
+            background: #e9eef3;
+            padding: 5px 12px;
+            border-radius: 40px;
+            color: #3b4a5c;
+            font-weight: 500;
+        }
+
+        .modal-content {
+            padding: 8px 24px 28px 24px;
+            min-height: 140px;
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: #1e293b;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .next-btn {
+            background: #2563eb;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 12px 36px;
+            border-radius: 40px;
+            box-shadow: 0 8px 18px -6px #2563eb99;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid #ffffff30;
+            letter-spacing: 0.5px;
+        }
+
+        .next-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.02);
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 主界面 - 默认隐藏 */
+        .main-content {
+            max-width: 720px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px -10px rgba(0,20,40,0.25);
+            padding: 32px 24px;
+            display: none;  /* 弹窗结束才显示 */
+        }
+
+        /* 头像行：两个圆形图片并排 */
+        .avatar-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e2e8f0;
+            border: 4px solid white;
+            box-shadow: 0 15px 20px -10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.02);
+        }
+
+        /* 色块通用 */
+        .block {
+            border-radius: 28px;
+            padding: 24px 26px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 24px -12px rgba(0,0,0,0.25);
+            transition: all 0.15s;
+            word-break: break-word;
+        }
+
+        .block-pink {
+            background: #ffe4e6;  /* 柔和粉色 */
+            color: #831843;
+            border-left: 6px solid #f472b6;
+        }
+
+        .block-orange {
+            background: #fff3e0;  /* 暖橙色 */
+            color: #7b341e;
+            border-left: 6px solid #fb923c;
+        }
+
+        .block-title {
+            font-size: 1.9rem;
+            font-weight: 650;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .song-item, .social-item {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin: 10px 0;
+        }
+
+        .song-item a, .social-item a {
+            color: #1e293b;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #94a3b8;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .song-item a:hover, .social-item a:hover {
+            color: #0f172a;
+            text-decoration-color: #2563eb;
+        }
+
+        .social-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .social-label {
+            font-weight: 600;
+            min-width: 90px;
+            color: #4a251b;
+        }
+
+        .mail-link {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px dotted #2563eb;
+        }
+
+        .mail-link:hover {
+            border-bottom: 2px solid;
+        }
+
+        .greeting {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 60px;
+            color: #164e63;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px dashed #cbd5e1;
+            margin: 20px 0 12px;
+        }
+
+        /* 工具类 */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 弹窗 overlay -->
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>📋 个人简介</h2>
+            <span id="stepCounter" class="modal-counter">1/6</span>
+        </div>
+        <div id="modalMessage" class="modal-content">
+            <!-- 动态内容 -->
+            你好
+        </div>
+        <div class="modal-footer">
+            <button id="nextButton" class="next-btn">下一个</button>
+        </div>
+    </div>
+</div>
+
+<!-- 主界面 (初始隐藏) -->
+<div id="mainContent" class="main-content">
+    <!-- 两个圆形图片并排 -->
+    <div class="avatar-row">
+        <img src="./199.png" alt="大运重卡logo" class="avatar" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23cbd5e1%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2255%22%20font-family%3D%22system-ui%22%20font-size%3D%2214%22%20fill%3D%22%23333455%22%3E199.png%3C%2Ftext%3E%3C%2Fsvg%3E'">
+        <img src="./152.png" alt="化学结构? 152" class="avatar" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%2394a3b8%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2255%22%20font-family%3D%22system-ui%22%20font-size%3D%2214%22%20fill%3D%22white%22%3E152.png%3C%2Ftext%3E%3C%2Fsvg%3E'">
+    </div>
+
+    <!-- 粉色色块 - 歌单排行榜 -->
+    <div class="block block-pink">
+        <div class="block-title">🎧 我的歌单排行榜 😋</div>
+        <div class="song-item">🥇 NO.1 《Weavers》<br><a href="https://163cn.tv/2s6mYP1" target="_blank" rel="noopener">https://163cn.tv/2s6mYP1</a></div>
+        <div class="song-item">🥈 NO.2 《Realms》<br><a href="https://163cn.tv/2s60PKo" target="_blank" rel="noopener">https://163cn.tv/2s60PKo</a></div>
+        <div class="song-item">🥉 NO.3 《passage D》<br><a href="https://163cn.tv/2s6pfGl" target="_blank" rel="noopener">https://163cn.tv/2s6pfGl</a></div>
+    </div>
+
+    <!-- 橙色色块 - 社交账号 -->
+    <div class="block block-orange">
+        <div class="block-title">🧡 我的社交账号</div>
+        
+        <div class="social-item"><span class="social-label">微信大号</span> AI337IA</div>
+        <div class="social-item"><span class="social-label">微信小号</span> AI114514IA</div>
+        <div class="social-item"><span class="social-label">QQ号</span> 1982377785</div>
+        <div class="social-item"><span class="social-label">推特账号</span> <a href="https://twitter.com/wwwwhhhhat21688" target="_blank" rel="noopener">@wwwwhhhhat21688</a></div>
+        <div class="social-item"><span class="social-label">YouTube</span> <a href="https://youtube.com/channel/UCwTW-tp3zWr8Y8c61Y6oZAQ?si=-UOvY4Yklj5_3-Yt" target="_blank" rel="noopener">youtube.com/channel/UCwTW-tp3zWr8Y8c61Y6oZAQ</a></div>
+        <div class="social-item"><span class="social-label">TikTok</span> <a href="https://www.tiktok.com/@337lh?_r=1&_t=ZS-94LyljuUR3o" target="_blank" rel="noopener">https://www.tiktok.com/@337lh</a></div>
+        <div class="social-item"><span class="social-label">我的邮箱</span> <a class="mail-link" href="mailto:1982377785@qq.com">1982377785@qq.com</a></div>
+        
+        <hr>
+        <div style="font-size:1.3rem; font-weight:600; text-align:right;">✨ 欢迎随时打扰我！</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 弹窗内容数组
+        const messages = [
+            "你好",
+            "我是来自微信的AAA-大运重卡蒋师傅，小号为AVAWA（我比较喜欢这个名字）",
+            "相信你是在我的微信简介看到的这条链接的，那么我将介绍一下自己",
+            "我喜欢折腾一些好玩的东西，比如这个网页，我也喜欢骑骑自行车，做一些自己的小动画",
+            "我喜欢听电子音乐，碎核和Drum&Bass，比如《Weavers》《Realms》《passage D》",
+            "我很难和不熟的人找到共同话题，所以不常主动找不熟的人说话，如果你有什么事情就尽管和我说，我会尽力帮助的"
+        ];
+
+        const total = messages.length;
+
+        // 获取元素
+        const modalOverlay = document.getElementById('modalOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const modalMessage = document.getElementById('modalMessage');
+        const stepCounter = document.getElementById('stepCounter');
+        const nextButton = document.getElementById('nextButton');
+
+        let currentIndex = 0;  // 0-based, 显示第一个弹窗
+
+        // 初始化显示
+        function updateModal(index) {
+            modalMessage.innerText = messages[index];
+            stepCounter.innerText = `${index+1}/${total}`;
+
+            // 最后一个弹窗时改变按钮文字
+            if (index === total - 1) {
+                nextButton.innerText = '完成 ➔';
+            } else {
+                nextButton.innerText = '下一个';
+            }
+        }
+
+        // 关闭弹窗，显示主界面
+        function finishModals() {
+            modalOverlay.style.display = 'none';   // 隐藏整个遮罩
+            mainContent.style.display = 'block';    // 显示主界面
+        }
+
+        // 处理点击下一步/完成
+        function onNext() {
+            if (currentIndex < total - 1) {
+                // 还没到最后一个 → 下一个弹窗
+                currentIndex++;
+                updateModal(currentIndex);
+            } else {
+                // 已经是最后一个，点击完成关闭弹窗，显示主界面
+                finishModals();
+            }
+        }
+
+        // 绑定按钮事件
+        nextButton.addEventListener('click', onNext);
+
+        // 可选：防止遮罩层点击关闭（需求只通过按钮走）
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                // 不允许点击背景关闭，但为了体验可以忽略 (不做任何事)
+                // 如果想增加温和提示可取消注释下一行
+                // alert('请点击“下一个”按钮继续 ✨');
+            }
+        });
+
+        // 设置初始弹窗
+        updateModal(0);   // 索引0： “你好”
+
+        // 确保主界面初始隐藏 (CSS 默认 .main-content 为 display:none)
+        // 但以防万一
+        mainContent.style.display = 'none';
+
+        // 如果用户刷新，一切重置，没问题
+
+        // 预加载图片（只是尝试避免裂图，但没有实际影响）
+        // 图片由img标签自己加载，上面onerror已做占位
+    })();
+</script>
+
+<!-- 对图片进一步友好说明（无实际代码影响） -->
+</body>
+</html>
